@@ -7,7 +7,7 @@ import { getUsers } from "./components/store/action/TestActions";
 import { useDispatch } from "react-redux";
 import { useEffect } from "react";
 
-function App() {
+function App(id) {
   //for redux
   const dispatch = useDispatch();
   useEffect(() => {
