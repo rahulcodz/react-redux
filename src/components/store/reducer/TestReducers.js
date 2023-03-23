@@ -5,6 +5,11 @@ const initialState = {
 
 export default function TestReducer(state = initialState, action) {
   switch (action.type) {
+    case "GET_DATA":
+      return {
+        ...state,
+        usersData: action.payload,
+      };
     case "GET_USERS":
       return {
         ...state,

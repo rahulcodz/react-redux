@@ -1,17 +1,52 @@
 import React, { useState } from "react";
-import { Button, Modal } from "react-bootstrap";
-
+import { Button, Dropdown, Modal } from "react-bootstrap";
+import Pagination from "react-bootstrap/Pagination";
 import { useDispatch, useSelector } from "react-redux";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import {
   deleteUser,
   getUserById,
+  getUsers,
   postUser,
   updateUser,
 } from "./store/action/TestActions";
 
 export default function ReduxForm({ match }) {
+  const dispatch = useDispatch();
+
+  //sorting
+
+  const [title, setTitle] = useState("name");
+  const [order, setOrder] = useState("Sort By");
+
+  //pagination
+
+  const paginationClick = (activeNum) => {
+    dispatch(getUsers(activeNum, "", "", ""));
+    setActiveNum(activeNum);
+  };
+
+  const [activeNum, setActiveNum] = useState(1);
+
+  let active = activeNum;
+  let items = [];
+  for (let activeNum = 1; activeNum <= 5; activeNum++) {
+    items.push(
+      <Pagination.Item
+        key={activeNum}
+        onClick={(e) => {
+          e.preventDefault();
+          paginationClick(activeNum);
+        }}
+        active={activeNum === active}
+      >
+        {activeNum}
+      </Pagination.Item>
+    );
+  }
+  //end
+
   const user = useSelector((state) => state.Test.users);
   const currentUserData = useSelector((state) => state.Test.currentUser);
 
@@ -25,8 +60,6 @@ export default function ReduxForm({ match }) {
     Country: Yup.string().required("Country Name Required"),
   });
 
-  const dispatch = useDispatch();
-  console.log(currentUserData);
   // delete modal
   const [showDeleteBox, setShowDeleteBox] = useState(false);
 
@@ -46,31 +79,19 @@ export default function ReduxForm({ match }) {
     });
   };
 
-  // edit or upate
+  //search field
 
-  // const { userId } = match.params;
+  const handleInputChange = (e) => {
+    // setQuery(e.target.value.toLowerCase());
 
-  // const singleUser = useSelector((state) =>
-  //   state.singleUser.find((user) => user.id === userId)
-  // );
+    dispatch(getUsers(activeNum, e.target.value, "", ""));
+  };
 
-  // console.log(singleUser);
-
-  // const [singleUser, setSingleUser] = useState(null);
-  // const singleUserData = useSelector((state) => state.Test.singleUser);
-
-  // useEffect(() => {
-  //   setSingleUser(singleUserData[id]);
-  // }, [singleUserData, id]);
-
-  // console.log(singleUser);
-
-  // handle create
+  //end
 
   const handleCreateItem = async (values) => {
     try {
       await dispatch(postUser(values));
-      console.log(values, "create user");
     } catch (error) {
       console.error(error);
     }
@@ -80,7 +101,7 @@ export default function ReduxForm({ match }) {
   const handleUpdateItem = async (values, id) => {
     try {
       await dispatch(updateUser(id, values));
-      console.log(values, "update");
+      // console.log(values, "update");
     } catch (error) {
       console.error(error);
     }
@@ -244,52 +265,118 @@ export default function ReduxForm({ match }) {
               </Formik>
             </Modal.Body>
           </Modal>
+
+          {/* dropdown shorting */}
+          <Dropdown>
+            <Dropdown.Toggle variant="success" id="dropdown-basic">
+              {title}
+            </Dropdown.Toggle>
+
+            <Dropdown.Menu>
+              <Dropdown.Item
+                onClick={(e) => {
+                  e.preventDefault();
+                  setTitle("name");
+                  dispatch(getUsers(1, "", "", title));
+                  console.log(title);
+                }}
+                href="#/action-1"
+              >
+                Name
+              </Dropdown.Item>
+              <Dropdown.Item
+                onClick={() => {
+                  setTitle("Email");
+                  dispatch(getUsers(1, "", "", title));
+                }}
+                href="#/action-2"
+              >
+                Email
+              </Dropdown.Item>
+
+              <Dropdown.Item
+                onClick={(e) => {
+                  e.preventDefault();
+                  setOrder("asc");
+                  dispatch(getUsers(1, "", order, ""));
+                }}
+                href="#/action-3"
+              >
+                Ascending
+              </Dropdown.Item>
+              <Dropdown.Item
+                onClick={(e) => {
+                  e.preventDefault();
+                  setOrder("desc");
+                  dispatch(getUsers(1, "", order, ""));
+                }}
+                href="#/action-3"
+              >
+                Descending
+              </Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
         </div>
       </div>
-      {user &&
-        user.map((item, index) => (
-          <div key={index} className="items">
-            <p>{item.name}</p>
-            <p>{item.Email}</p>
-            <p>{item.Phone}</p>
-            <p>{item.Country}</p>
-            <p>{item.ZipCode}</p>
-            <p>{item.CountryCode}</p>
-            <p>{item.Address}</p>
-            <div className="item">
-              <button
-                className="item_button"
-                onClick={() => {
-                  handleUpdateUser(item.id);
-                }}
-              >
-                Edit
-              </button>{" "}
-              <button className="item_button" onClick={handleShowDeleteBox}>
-                Delete
-              </button>
-            </div>
-            <Modal show={showDeleteBox} onHide={handleCloseDeleteBox}>
-              <Modal.Header closeButton>
-                <Modal.Title>Delete Item</Modal.Title>
-              </Modal.Header>
-              <Modal.Body>
-                Are you sure you really want to delete item from your lists!
-              </Modal.Body>
-              <Modal.Footer>
+
+      <div className="serachInput">
+        <input
+          placeholder="Search..."
+          type="text"
+          name="text"
+          onChange={handleInputChange}
+        />
+      </div>
+      <div>
+        {user &&
+          user.map((item, index) => (
+            <div key={index} className="items">
+              <p>{item.name}</p>
+              <p>{item.Email}</p>
+              <p>{item.Phone}</p>
+              <p>{item.Country}</p>
+              <p>{item.ZipCode}</p>
+              <p>{item.CountryCode}</p>
+              <p>{item.Address}</p>
+              <div className="item">
                 <button
                   className="item_button"
                   onClick={() => {
-                    dispatch(deleteUser(item.id));
-                    handleCloseDeleteBox();
+                    handleUpdateUser(item.id);
                   }}
                 >
+                  Edit
+                </button>{" "}
+                <button className="item_button" onClick={handleShowDeleteBox}>
                   Delete
                 </button>
-              </Modal.Footer>
-            </Modal>
-          </div>
-        ))}
+              </div>
+              <Modal show={showDeleteBox} onHide={handleCloseDeleteBox}>
+                <Modal.Header closeButton>
+                  <Modal.Title>Delete Item</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  Are you sure you really want to delete item from your lists!
+                </Modal.Body>
+                <Modal.Footer>
+                  <button
+                    className="item_button"
+                    onClick={() => {
+                      dispatch(deleteUser(item.id));
+                      handleCloseDeleteBox();
+                    }}
+                  >
+                    Delete
+                  </button>
+                </Modal.Footer>
+              </Modal>
+            </div>
+          ))}
+      </div>
+
+      <div className="pagination">
+        <Pagination size="lg">{items}</Pagination>
+      </div>
     </div>
   );
 }

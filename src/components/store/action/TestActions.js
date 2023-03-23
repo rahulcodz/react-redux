@@ -1,17 +1,49 @@
 import axios from "axios";
 
-export const getUsers = () => {
+export const getData = () => {
   return (dispatch) => {
     axios
-      .get("https://64101e4be1212d9cc92a0def.mockapi.io/user")
+      .get("https://jsonplaceholder.typicode.com/users")
       .then((response) => {
-        dispatch({ type: "GET_USERS", payload: response.data });
+        dispatch({ type: "GET_DATA", payload: response.data });
       })
       .catch((error) => {
         console.log(error);
       });
   };
 };
+
+export function getUsers(activeNum, name, order, title) {
+  const url = new URL("https://64101e4be1212d9cc92a0def.mockapi.io/user");
+
+  if (name) {
+    url.searchParams.append("name", name);
+  }
+  //Pagination
+
+  url.searchParams.append("limit", 10);
+  url.searchParams.append("page", activeNum);
+  // console.log(activeNum, "activeNum in action");
+
+  //sorting
+
+  url.searchParams.append("sortBy", title);
+  url.searchParams.append("order", order);
+  console.log(order, "order");
+  // console.log(title, "title");
+
+  return (dispatch) => {
+    axios
+      .get(url)
+      .then((response) => {
+        dispatch({ type: "GET_USERS", payload: response.data });
+        // console.log(response.data.page_total);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+}
 
 export const getUserById = (id) => {
   return (dispatch) => {
