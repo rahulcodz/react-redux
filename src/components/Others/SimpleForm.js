@@ -5,7 +5,13 @@ import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 
 import { useState, useEffect } from "react";
-import { getItems, getItem, createItem, updateItem, deleteItem } from "../api";
+import {
+  getItems,
+  getItem,
+  createItem,
+  updateItem,
+  deleteItem,
+} from "../../services/api";
 
 function App() {
   const [items, setItems] = useState([]);

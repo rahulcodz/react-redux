@@ -10,7 +10,7 @@ import {
   getUsers,
   postUser,
   updateUser,
-} from "./store/action/TestActions";
+} from "../store/action/TestActions";
 
 export default function ReduxForm({ match }) {
   const dispatch = useDispatch();

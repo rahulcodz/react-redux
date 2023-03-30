@@ -1,27 +1,23 @@
-import "./App.css";
-// import SimpleForm from "./components/SimpleForm";
+import "../src/assets/App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
-
-import ReduxForm from "./components/ReduxForm";
-import { getData, getUsers } from "./components/store/action/TestActions";
+import { getData, getUsers, toastAction } from "./Redux/action/TestActions";
 import { useDispatch } from "react-redux";
 import { useEffect } from "react";
-// import SearchBox from "./components/SearchBox";
 
+import Router from "./Route/Router";
 function App(id) {
   //for redux
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(getUsers(1, ""));
+    dispatch(getUsers(1, "", "", ""));
     dispatch(getData());
+    dispatch(toastAction());
   });
 
   return (
-    <div>
-      {/* <SimpleForm /> */}
-      {/* <SearchBox /> */}
-      <ReduxForm />
-    </div>
+    <>
+      <Router />
+    </>
   );
 }
 

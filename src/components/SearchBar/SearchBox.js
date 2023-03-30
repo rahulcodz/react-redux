@@ -11,28 +11,6 @@ export default function SearchBox() {
     setQuery(e.target.value.toLowerCase());
   };
 
-  //
-
-  // const url = new URL("https://PROJECT_TOKEN.mockapi.io/users/1/tasks");
-  // url.searchParams.append("title", "hello");
-  // fetch(url, {
-  //   method: "GET",
-  //   headers: { "content-type": "application/json" },
-  // })
-  //   .then((res) => {
-  //     if (res.ok) {
-  //       return res.json();
-  //     }
-  //     // handle error
-  //   })
-  //   .then((tasks) => {
-  //     // mockapi returns only tasks that match hello string
-  //     console.log(tasks);
-  //   })
-  //   .catch((error) => {
-  //     // handle error
-  //   });
-
   return (
     <div>
       <div className="serachInput">
